@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Reportes</h1>
+      <p>Ventas por día</p>
+    </header>
+
+    <main>
+      <h2>Período</h2>
+
+      {% with mensajes = get_flashed_messages(with_categories=true) %} {% for
+      categoria, mensaje in mensajes %}
+      <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+      {% endfor %} {% endwith %}
+
+      <form action="/reportes" method="GET">
+        <label>Desde:</label>
+        <input type="date" name="desde" value="{{ desde }}" required />
+
+        <label>Hasta:</label>
+        <input type="date" name="hasta" value="{{ hasta }}" required />
+
+        <button type="submit">Ver reporte</button>
+      </form>
+
+      <p>
+        <a href="/reportes?desde={{ hoy }}&hasta={{ hoy }}">Hoy</a>
+        &nbsp;|&nbsp;
+        <a href="/reportes?desde={{ primer_dia_mes }}&hasta={{ hoy }}"
+          >Este mes</a
+        >
+      </p>
+
+      <h2>Ventas del {{ desde }} al {{ hasta }}</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th class="monto">Ventas</th>
+            <th class="monto">Kilos</th>
+            <th class="monto">Vendido</th>
+            <th class="monto">Cobrado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dia in ventas_diarias %}
+          <tr>
+            <td>{{ dia[0] }}</td>
+            <td class="monto">{{ dia[1] }}</td>
+            <td class="monto">{{ "{:g}".format(dia[2]) }} kg</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(dia[3]).replace(",", ".") }}
+            </td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(dia[4]).replace(",", ".") }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5">No hay ventas en este período.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if ventas_diarias %}
+        <tfoot>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td class="monto">
+              <strong>{{ ventas_diarias | sum(attribute=1) }}</strong>
+            </td>
+            <td class="monto">
+              <strong
+                >{{ "{:g}".format(ventas_diarias | sum(attribute=2)) }}
+                kg</strong
+              >
+            </td>
+            <td class="monto">
+              <strong
+                >Gs. {{ "{:,.0f}".format(ventas_diarias |
+                sum(attribute=3)).replace(",", ".") }}</strong
+              >
+            </td>
+            <td class="monto">
+              <strong
+                >Gs. {{ "{:,.0f}".format(ventas_diarias |
+                sum(attribute=4)).replace(",", ".") }}</strong
+              >
+            </td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+      <h2>Ventas por mes (últimos 12 meses)</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th class="monto">Ventas</th>
+            <th class="monto">Kilos</th>
+            <th class="monto">Vendido</th>
+            <th class="monto">Cobrado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in ventas_mensuales %}
+          <tr>
+            <td>{{ m[0] }}</td>
+            <td class="monto">{{ m[1] }}</td>
+            <td class="monto">{{ "{:g}".format(m[2]) }} kg</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(m[3]).replace(",", ".") }}
+            </td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(m[4]).replace(",", ".") }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5">Todavía no hay ventas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h2>Productos más vendidos</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="monto">Kilos</th>
+            <th class="monto">Vendido</th>
+            <th class="monto">Ganancia bruta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in productos_vendidos %}
+          <tr>
+            <td>{{ p[0] }}</td>
+            <td class="monto">{{ "{:g}".format(p[1]) }} kg</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(p[2]).replace(",", ".") }}
+            </td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(p[3]).replace(",", ".") }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4">No hay ventas en este período.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h2>Gastos por categoría</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th class="monto">Cantidad</th>
+            <th class="monto">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in gastos_categoria %}
+          <tr>
+            <td>{{ g[0] }}</td>
+            <td class="monto">{{ g[1] }}</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(g[2]).replace(",", ".") }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3">No hay gastos en este período.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h2>Estado actual de deudas por cliente</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th class="monto">Deudas abiertas</th>
+            <th class="monto">Total adeudado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in deudas_clientes %}
+          <tr>
+            <td>{{ d[0] }}</td>
+            <td class="monto">{{ d[1] }}</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(d[2]).replace(",", ".") }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3">No hay deudas pendientes.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if deudas_clientes %}
+        <tfoot>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td class="monto">
+              <strong>{{ deudas_clientes | sum(attribute=1) }}</strong>
+            </td>
+            <td class="monto">
+              <strong
+                >Gs. {{ "{:,.0f}".format(deudas_clientes |
+                sum(attribute=2)).replace(",", ".") }}</strong
+              >
+            </td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+      <h2>Historial completo de caja</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Apertura</th>
+            <th>Cierre</th>
+            <th class="monto">Inicial</th>
+            <th class="monto">Contado</th>
+            <th class="monto">Diferencia</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in historial_cajas %}
+          <tr>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[3] if c[3] else "-" }}</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(c[2]).replace(",", ".") }}
+            </td>
+            <td class="monto">
+              {% if c[4] is not none %}Gs. {{
+              "{:,.0f}".format(c[4]).replace(",", ".") }}{% else %}-{% endif %}
+            </td>
+            <td class="monto">
+              {% if c[5] is not none %}Gs. {{
+              "{:,.0f}".format(c[5]).replace(",", ".") }}{% else %}-{% endif %}
+            </td>
+            <td>{{ c[6] }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6">Todavía no hay cajas registradas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <p><a href="/">Volver al panel principal</a></p>
+    </main>
+  </body>
+</html>

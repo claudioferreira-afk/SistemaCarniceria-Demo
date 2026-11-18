@@ -1,0 +1,128 @@
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar venta</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <header>
+      <h1>Carnicería</h1>
+      <p>Registro de ventas</p>
+    </header>
+
+    <main>
+      <h2>Nueva venta</h2>
+
+      {% with mensajes = get_flashed_messages(with_categories=true) %} {% for
+      categoria, mensaje in mensajes %}
+      <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+      {% endfor %} {% endwith %}
+
+      <form method="POST" action="/ventas">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label>Seleccionar producto</label>
+
+        <select name="producto_id" id="producto" required>
+          <option value="">Seleccionar producto</option>
+
+          {% for producto in productos %}
+          <option value="{{ producto[0] }}" data-precio="{{ producto[3] }}">
+            {{ producto[1] }} - Gs. {{ "{:,.0f}".format(producto[3]) }}/kg
+          </option>
+          {% endfor %}
+        </select>
+
+        <label>Cantidad vendida (kg)</label>
+
+        <input
+          type="number"
+          name="cantidad"
+          id="cantidad"
+          min="0.01"
+          step="0.01"
+          placeholder="Ej: 2.5"
+          required
+        />
+
+        <label>Total de la venta</label>
+
+        <p id="total">Gs. 0</p>
+
+        <label>Forma de pago</label>
+
+        <select name="forma_pago" id="forma_pago" required>
+          <option value="">Seleccionar forma de pago</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Crédito">Crédito</option>
+        </select>
+
+        <div id="seccion_cliente" style="display: none">
+          <label>Seleccionar cliente</label>
+
+          <select name="cliente_id" id="cliente_id">
+            <option value="">Seleccionar cliente</option>
+
+            {% for cliente in clientes %}
+            <option value="{{ cliente[0] }}">{{ cliente[1] }}</option>
+            {% endfor %}
+          </select>
+
+          {% if not clientes %}
+          <p>Primero debés registrar un cliente.</p>
+          {% endif %}
+        </div>
+
+        <button type="submit">Registrar venta</button>
+      </form>
+
+      <a href="/">Volver al panel principal</a>
+    </main>
+
+    <script>
+      const producto = document.getElementById("producto");
+      const cantidad = document.getElementById("cantidad");
+      const total = document.getElementById("total");
+
+      const formaPago = document.getElementById("forma_pago");
+      const seccionCliente = document.getElementById("seccion_cliente");
+      const clienteId = document.getElementById("cliente_id");
+
+      function calcularTotal() {
+        const opcion = producto.options[producto.selectedIndex];
+
+        const precio = Number(opcion.dataset.precio) || 0;
+        const kilos = Number(cantidad.value) || 0;
+
+        const resultado = precio * kilos;
+
+        total.textContent =
+          "Gs. " +
+          resultado.toLocaleString("es-PY", {
+            maximumFractionDigits: 0,
+          });
+      }
+
+      function mostrarCliente() {
+        const esCredito = formaPago.value === "Crédito";
+
+        seccionCliente.style.display = esCredito ? "block" : "none";
+
+        clienteId.required = esCredito;
+      }
+
+      producto.addEventListener("change", calcularTotal);
+      cantidad.addEventListener("input", calcularTotal);
+      formaPago.addEventListener("change", mostrarCliente);
+    </script>
+  </body>
+</html>

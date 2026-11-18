@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Carnicería</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="encabezado-contenido">
+        <div>
+          <h1>Carnicería</h1>
+          <p>Sistema de gestión</p>
+        </div>
+
+        <div class="acciones-encabezado">
+          <button type="button" id="btnTema" class="btn-tema">
+            ☀️ Modo claro
+          </button>
+
+          <form action="{{ url_for('salir') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="btn-tema">Cerrar sesión</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <h2>Panel principal</h2>
+      <p>Bienvenido al sistema de gestión de tu carnicería.</p>
+
+      <section class="resumen">
+        <div class="tarjeta">
+          <h3>Ventas de hoy</h3>
+          <p>Gs. {{ "{:,.0f}".format(ventas_hoy).replace(",", ".") }}</p>
+        </div>
+
+        <div class="tarjeta">
+          <h3>Dinero cobrado</h3>
+          <p>
+            Gs. {{ "{:,.0f}".format(dinero_cobrado_hoy).replace(",", ".") }}
+          </p>
+        </div>
+
+        <div class="tarjeta">
+          <h3>Deudas pendientes</h3>
+          <p>Gs. {{ "{:,.0f}".format(deudas_pendientes).replace(",", ".") }}</p>
+        </div>
+      </section>
+
+      <h2>Menú principal</h2>
+
+      <section class="menu">
+        <a href="/ventas" class="opcion">
+          <span class="icono">🛒</span>
+          <h3>Registrar venta</h3>
+          <p>Registrar una nueva venta.</p>
+        </a>
+
+        <a href="/productos" class="opcion">
+          <span class="icono">🥩</span>
+          <h3>Productos y stock</h3>
+          <p>Consultar productos, precios y existencias.</p>
+        </a>
+
+        <a href="/clientes" class="opcion">
+          <span class="icono">👥</span>
+          <h3>Clientes</h3>
+          <p>Registrar y consultar clientes.</p>
+        </a>
+
+        <a href="/deudas" class="opcion">
+          <span class="icono">📋</span>
+          <h3>Gestión de deudas</h3>
+          <p>Consultar saldos y registrar pagos.</p>
+        </a>
+
+        <a href="/historial" class="opcion">
+          <span class="icono">📊</span>
+          <h3>Historial de ventas</h3>
+          <p>Consultar todas las ventas registradas.</p>
+        </a>
+
+        <a href="/pagos" class="opcion">
+          <span class="icono">💵</span>
+          <h3>Historial de pagos</h3>
+          <p>Consultar los pagos recibidos.</p>
+        </a>
+
+        <a href="/caja" class="opcion">
+          <span class="icono">🏦</span>
+          <h3>Control de caja</h3>
+          <p>Abrir, consultar y cerrar la caja diaria.</p>
+        </a>
+
+        <a href="/gastos" class="opcion">
+          <span class="icono">🧾</span>
+          <h3>Gastos</h3>
+          <p>Registrar gastos de luz, agua, transporte y otros.</p>
+        </a>
+        <a href="/ganancias" class="opcion">
+          <span class="icono">📈</span>
+          <h3>Ganancias</h3>
+          <p>Ver ingresos, costos, gastos y ganancia por período.</p>
+        </a>
+        <a href="/reportes" class="opcion">
+          <span class="icono">📑</span>
+          <h3>Reportes</h3>
+          <p>Ventas por día, productos más vendidos, gastos y deudas.</p>
+        </a>
+      </section>
+    </main>
+    <script>
+      const botonTema = document.getElementById("btnTema");
+      const temaGuardado = localStorage.getItem("tema") || "oscuro";
+
+      document.documentElement.setAttribute("data-tema", temaGuardado);
+
+      function actualizarBoton() {
+        const temaActual = document.documentElement.getAttribute("data-tema");
+
+        botonTema.textContent =
+          temaActual === "oscuro" ? "☀️ Modo claro" : "🌙 Modo oscuro";
+      }
+
+      actualizarBoton();
+
+      botonTema.addEventListener("click", () => {
+        const temaActual = document.documentElement.getAttribute("data-tema");
+        const nuevoTema = temaActual === "oscuro" ? "claro" : "oscuro";
+
+        document.documentElement.setAttribute("data-tema", nuevoTema);
+        localStorage.setItem("tema", nuevoTema);
+
+        actualizarBoton();
+      });
+    </script>
+  </body>
+</html>

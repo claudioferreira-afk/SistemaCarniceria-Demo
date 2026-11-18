@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ocurrió un problema</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Carnicería</h1>
+      <p>Sistema de gestión</p>
+    </header>
+
+    <main>
+      <h2>{{ titulo }}</h2>
+
+      <p class="mensaje error">{{ mensaje }}</p>
+
+      <p>
+        Tus datos están a salvo. Si el problema se repite, avisá a quien
+        te instaló el sistema y mostrale esta pantalla.
+      </p>
+
+      <p><a href="/">Volver al panel principal</a></p>
+    </main>
+  </body>
+</html>

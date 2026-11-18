@@ -1,0 +1,185 @@
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productos y Stock</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <header>
+      <h1>Carnicería</h1>
+      <p>Gestión de productos y stock</p>
+    </header>
+
+    <main>
+      <h2>Registrar producto</h2>
+
+      <form method="POST" action="/productos">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label>Nombre del producto</label>
+        <input type="text" name="nombre" placeholder="Ej: Costilla" required />
+
+        <label>Costo por kilogramo (Gs.)</label>
+        <input type="number" name="costo_kg" min="0" step="1" required />
+
+        <label>Precio de venta por kilogramo (Gs.)</label>
+        <input type="number" name="precio_kg" min="0" step="1" required />
+
+        <label>Stock inicial (kg)</label>
+        <input type="number" name="stock_kg" min="0" step="0.01" required />
+
+        <label>Stock mínimo (kg)</label>
+        <input type="number" name="stock_minimo" min="0" step="0.01" required />
+
+        <button type="submit">Guardar producto</button>
+      </form>
+
+      <h2>Ingresar nueva mercadería</h2>
+
+      <form method="POST" action="/agregar-stock">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label>Seleccionar producto</label>
+
+        <select name="producto_id" required>
+          {% for producto in productos %}
+            <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+          {% endfor %}
+        </select>
+
+        <label>Cantidad recibida (kg)</label>
+
+        <input
+          type="number"
+          name="cantidad"
+          min="0.01"
+          step="0.01"
+          placeholder="Ej: 15"
+          required
+        />
+
+        <button type="submit">Agregar al stock</button>
+      </form>
+
+      <h2>Productos registrados</h2>
+
+      {% if productos %}
+
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Costo/kg</th>
+            <th>Precio/kg</th>
+            <th>Stock (kg)</th>
+            <th>Stock mínimo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for producto in productos %}
+          <tr>
+            <td>{{ producto[1] }}</td>
+
+            <td>Gs. {{ "{:,.0f}".format(producto[2]) }}</td>
+
+            <td>Gs. {{ "{:,.0f}".format(producto[3]) }}</td>
+
+            <td>
+              {% if producto[4] <= producto[5] %}
+                <span class="stock-bajo">Stock bajo</span>
+              {% else %}
+                <span class="stock-normal">Disponible</span>
+              {% endif %}
+              {{ producto[4] }} kg
+            </td>
+
+            <td>{{ producto[5] }} kg</td>
+
+            <td>
+              <details>
+                <summary>Editar</summary>
+
+                <form
+                  method="POST"
+                  action="/editar-producto/{{ producto[0] }}"
+                >
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                  <label>Nombre</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value="{{ producto[1] }}"
+                    required
+                  />
+
+                  <label>Costo por kg</label>
+                  <input
+                    type="number"
+                    name="costo_kg"
+                    value="{{ producto[2] }}"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+
+                  <label>Precio por kg</label>
+                  <input
+                    type="number"
+                    name="precio_kg"
+                    value="{{ producto[3] }}"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+
+                  <label>Stock mínimo</label>
+                  <input
+                    type="number"
+                    name="stock_minimo"
+                    value="{{ producto[5] }}"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+
+                  <button type="submit">Guardar cambios</button>
+                </form>
+              </details>
+
+              <form
+                method="POST"
+                action="/eliminar-producto/{{ producto[0] }}"
+                onsubmit="return confirm('¿Estás seguro de eliminar este producto?');"
+              >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <button type="submit" class="btn-eliminar">
+                  Eliminar
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% else %}
+
+      <p>Todavía no hay productos registrados.</p>
+
+      {% endif %}
+
+      <a href="/">Volver al panel principal</a>
+    </main>
+  </body>
+</html>

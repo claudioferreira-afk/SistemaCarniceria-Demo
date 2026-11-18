@@ -1,0 +1,71 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de ventas</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <header>
+        <h1>Carnicería</h1>
+        <p>Historial de ventas</p>
+    </header>
+
+    <main>
+
+        <h2>Ventas registradas</h2>
+
+        {% if ventas %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio/kg</th>
+                    <th>Total</th>
+                    <th>Pago</th>
+                    <th>Cobrado</th>
+                    <th>Cliente</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for venta in ventas %}
+                <tr>
+                    <td>{{ venta[0] }}</td>
+                    <td>{{ venta[1] }}</td>
+                    <td>{{ "{:g}".format(venta[2]) }} kg</td>
+                    <td>Gs. {{ "{:,.0f}".format(venta[3]).replace(",", ".") }}</td>
+                    <td>Gs. {{ "{:,.0f}".format(venta[4]).replace(",", ".") }}</td>
+                    <td>{{ venta[5] }}</td>
+                    <td>Gs. {{ "{:,.0f}".format(venta[6]).replace(",", ".") }}</td>
+                    <td>{{ venta[7] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+
+        <p>Todavía no hay ventas registradas.</p>
+
+        {% endif %}
+
+        <a href="/ventas">Registrar nueva venta</a>
+        <br>
+        <a href="/">Volver al panel principal</a>
+
+    </main>
+
+</body>
+</html>

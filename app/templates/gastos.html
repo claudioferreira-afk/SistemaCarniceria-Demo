@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>Gastos</h1>
+        <p>Gastos operativos del negocio</p>
+    </header>
+
+    <main>
+
+        <h2>Registrar gasto</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <form action="/gastos" method="POST">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>Concepto:</label>
+            <input type="text" name="concepto" placeholder="Ej: Factura de luz" required>
+
+            <label>Categoría:</label>
+            <select name="categoria" required>
+                <option value="">Seleccionar categoría</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Monto (Gs.):</label>
+            <input type="number" name="monto" min="1" step="1" required>
+
+            <label>Forma de pago:</label>
+            <select name="forma_pago" required>
+                <option value="">Seleccionar forma de pago</option>
+                <option value="Efectivo">Efectivo (sale de la caja)</option>
+                <option value="Transferencia">Transferencia</option>
+            </select>
+
+            <button type="submit">Registrar gasto</button>
+
+        </form>
+
+        <h2>Gastos registrados</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Concepto</th>
+                    <th>Categoría</th>
+                    <th>Pago</th>
+                    <th class="monto">Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gasto in gastos %}
+                <tr>
+                    <td>{{ gasto[0] }}</td>
+                    <td>{{ gasto[1] }}</td>
+                    <td>{{ gasto[2] }}</td>
+                    <td>{{ gasto[4] }}</td>
+                    <td class="monto">Gs. {{ "{:,.0f}".format(gasto[3]).replace(",", ".") }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">Todavía no hay gastos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><a href="/">Volver al panel principal</a></p>
+
+    </main>
+
+</body>
+</html>

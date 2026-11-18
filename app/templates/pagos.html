@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de pagos</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Carnicería</h1>
+        <p>Historial de pagos</p>
+    </header>
+
+    <main>
+
+        <h2>Pagos registrados</h2>
+
+        {% if pagos %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Monto pagado</th>
+                    <th>N.º de venta</th>
+                    <th>Forma de pago</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for pago in pagos %}
+                <tr>
+                    <td>{{ pago[0] }}</td>
+                    <td>{{ pago[1] or 'Sin cliente' }}</td>
+                    <td>{{ pago[2] }}</td>
+                    <td>
+                        Gs. {{ "{:,.0f}".format(pago[3]).replace(",", ".") }}
+                    </td>
+                    <td>{{ pago[4] }}</td>
+                    <td>{{ pago[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+
+        <p>Todavía no hay pagos registrados.</p>
+
+        {% endif %}
+
+        <a href="/">Volver al panel principal</a>
+
+    </main>
+
+</body>
+</html>

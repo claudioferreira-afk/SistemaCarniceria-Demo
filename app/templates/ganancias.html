@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ganancias</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Ganancias</h1>
+      <p>Resultados del negocio por período</p>
+    </header>
+
+    <main>
+      <h2>Período</h2>
+
+      {% with mensajes = get_flashed_messages(with_categories=true) %} {% for
+      categoria, mensaje in mensajes %}
+      <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+      {% endfor %} {% endwith %}
+
+      <form action="/ganancias" method="GET">
+        <label>Desde:</label>
+        <input type="date" name="desde" value="{{ desde }}" required />
+
+        <label>Hasta:</label>
+        <input type="date" name="hasta" value="{{ hasta }}" required />
+
+        <button type="submit">Ver resultados</button>
+      </form>
+
+      <p>
+        <a href="/ganancias?desde={{ hoy }}&hasta={{ hoy }}">Hoy</a>
+        &nbsp;|&nbsp;
+        <a href="/ganancias?desde={{ primer_dia_mes }}&hasta={{ hoy }}"
+          >Este mes</a
+        >
+      </p>
+
+      <h2>Resultados del {{ desde }} al {{ hasta }}</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th class="monto">Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ingresos por ventas</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(resultado.ingresos).replace(",", ".") }}
+            </td>
+          </tr>
+          <tr>
+            <td>Costo de la mercadería vendida</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(resultado.costo).replace(",", ".") }}
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Ganancia bruta</strong></td>
+            <td class="monto">
+              <strong
+                >Gs. {{ "{:,.0f}".format(resultado.ganancia_bruta).replace(",",
+                ".") }}</strong
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>Gastos operativos</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(resultado.gastos).replace(",", ".") }}
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Ganancia neta</strong></td>
+            <td class="monto">
+              <strong
+                class="{{ 'stock-normal' if resultado.ganancia_neta >= 0 else 'stock-bajo' }}"
+              >
+                Gs. {{ "{:,.0f}".format(resultado.ganancia_neta).replace(",",
+                ".") }}
+              </strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Movimientos de dinero del período</h2>
+
+      <table>
+        <tbody>
+          <tr>
+            <td>Dinero cobrado durante el período</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(resultado.cobrado).replace(",", ".") }}
+            </td>
+          </tr>
+          <tr>
+            <td>Pendiente de las ventas del período</td>
+            <td class="monto">
+              Gs. {{ "{:,.0f}".format(resultado.pendiente).replace(",", ".") }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><a href="/">Volver al panel principal</a></p>
+    </main>
+  </body>
+</html>

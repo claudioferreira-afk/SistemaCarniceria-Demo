@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de caja</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>Control de caja</h1>
+        <p>Administración del dinero diario</p>
+    </header>
+
+    <main>
+        <h2>Caja diaria</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        {% if caja %}
+
+            {% if vencida %}
+                <p class="mensaje error">
+                    Esta caja se abrió el {{ caja[1][:10] }}, un día anterior a hoy.
+                    Cerrá la caja de ayer antes de continuar: mientras siga abierta,
+                    no se pueden registrar ventas ni pagos en efectivo.
+                </p>
+            {% endif %}
+
+            <section class="resumen">
+                <div class="tarjeta">
+                    <h3>Estado</h3>
+                    <p>Abierta</p>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Monto inicial</h3>
+                    <p>Gs. {{ "{:,.0f}".format(caja[2]).replace(",", ".") }}</p>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Saldo esperado</h3>
+                    <p>Gs. {{ "{:,.0f}".format(saldo).replace(",", ".") }}</p>
+                </div>
+            </section>
+
+            <h2>Registrar movimiento</h2>
+
+            <form action="/movimiento-caja" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label>Tipo de movimiento:</label>
+                <select name="tipo" required>
+                    <option value="Entrada">Entrada</option>
+                    <option value="Salida">Salida</option>
+                </select>
+
+                <label>Concepto:</label>
+                <input type="text" name="concepto" required>
+
+                <label>Monto (Gs.):</label>
+                <input type="number" name="monto" min="1" step="1" required>
+
+                <button type="submit">Registrar movimiento</button>
+            </form>
+
+            <h2>Cerrar caja</h2>
+
+            <form action="/cerrar-caja" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label>Dinero contado en caja (Gs.):</label>
+                <input type="number" name="monto_contado" min="0" step="1" required>
+
+                <button type="submit">Cerrar caja</button>
+            </form>
+
+            <h2>Movimientos de esta caja</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movimiento in movimientos %}
+                    <tr>
+                        <td>{{ movimiento[0] }}</td>
+                        <td>{{ movimiento[1] }}</td>
+                        <td>{{ movimiento[2] }}</td>
+                        <td>Gs. {{ "{:,.0f}".format(movimiento[3]).replace(",", ".") }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">Todavía no hay movimientos.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+
+            <h2>Abrir caja</h2>
+            <p>Para comenzar a registrar las operaciones del día, primero abrí la caja.</p>
+
+            <form action="/abrir-caja" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label>Monto inicial (Gs.):</label>
+                <input type="number" name="monto_inicial" min="0" step="1" required>
+
+                <button type="submit">Abrir caja</button>
+            </form>
+
+        {% endif %}
+
+        <p><a href="/">Volver al panel principal</a></p>
+    </main>
+
+</body>
+</html>

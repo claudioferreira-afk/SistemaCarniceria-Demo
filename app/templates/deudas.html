@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de deudas</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <header>
+        <h1>Carnicería</h1>
+        <p>Gestión de deudas y pagos</p>
+    </header>
+
+    <main>
+
+        <h2>Deudas pendientes</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p class="mensaje {{ categoria }}">{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        {% if deudas %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Total</th>
+                    <th>Cobrado</th>
+                    <th>Saldo pendiente</th>
+                    <th>Registrar pago</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for deuda in deudas %}
+                <tr>
+                    <td>{{ deuda[1] }}</td>
+
+                    <td>{{ deuda[6] or 'Sin cliente' }}</td>
+
+                    <td>{{ deuda[2] }}</td>
+
+                    <td>
+                        Gs. {{ "{:,.0f}".format(deuda[3]).replace(",", ".") }}
+                    </td>
+
+                    <td>
+                        Gs. {{ "{:,.0f}".format(deuda[4]).replace(",", ".") }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            Gs. {{ "{:,.0f}".format(deuda[5]).replace(",", ".") }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <form method="POST" action="/registrar-pago">
+
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <input
+                                type="hidden"
+                                name="venta_id"
+                                value="{{ deuda[0] }}"
+                            >
+
+                            <input
+                                type="number"
+                                name="monto"
+                                min="1"
+                                max="{{ deuda[5] }}"
+                                step="1"
+                                placeholder="Monto en Gs."
+                                required
+                            >
+
+                            <select name="forma_pago" required>
+                                <option value="">Forma de pago</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                            </select>
+
+                            <button type="submit">
+                                Registrar pago
+                            </button>
+
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+
+        <p>No hay deudas pendientes.</p>
+
+        {% endif %}
+
+        <a href="/">Volver al panel principal</a>
+
+    </main>
+
+</body>
+</html>
