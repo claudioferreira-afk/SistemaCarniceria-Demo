@@ -36,7 +36,9 @@
     --radio: 12px;
 }
 
-/* MODO CLARO */
+/* =====================================================
+   MODO CLARO
+===================================================== */
 
 :root[data-tema="claro"] {
     color-scheme: light;
@@ -87,7 +89,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: var(--fondo);
     color: var(--texto);
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.6;
     min-height: 100vh;
     transition: background-color 0.25s, color 0.25s;
@@ -112,10 +114,11 @@ header {
 
 header h1 {
     margin-bottom: 5px;
-    font-size: 34px;
+    font-size: 30px;
     font-weight: bold;
     letter-spacing: 0.5px;
 }
+
 /* SELECTOR DE TEMA */
 
 .encabezado-contenido {
@@ -131,6 +134,7 @@ header h1 {
     width: auto;
     min-width: 150px;
 }
+
 .acciones-encabezado {
     display: flex;
     align-items: center;
@@ -152,9 +156,10 @@ header h1 {
     margin-top: 0;
     width: auto;
 }
+
 header p {
     color: var(--texto-secundario);
-    font-size: 18px;
+    font-size: 16px;
 }
 
 /* =====================================================
@@ -171,7 +176,7 @@ main {
 main h2 {
     margin-top: 25px;
     margin-bottom: 18px;
-    font-size: 27px;
+    font-size: 24px;
     color: var(--texto);
 }
 
@@ -212,12 +217,12 @@ main h3 {
 .tarjeta h3,
 .opcion h3 {
     color: var(--texto);
-    font-size: 21px;
+    font-size: 19px;
 }
 
 .tarjeta p {
     margin-top: 12px;
-    font-size: 27px;
+    font-size: 24px;
     font-weight: bold;
     color: var(--texto);
 }
@@ -236,7 +241,7 @@ main h3 {
 .opcion p {
     margin-top: 10px;
     color: var(--texto-secundario);
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.5;
 }
 
@@ -248,12 +253,12 @@ main h3 {
 
 .icono {
     display: block;
-    font-size: 36px;
+    font-size: 32px;
     margin-bottom: 15px;
 }
 
 .opcion h3 {
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 10px;
 }
 
@@ -284,7 +289,7 @@ form label {
     margin-top: 16px;
     margin-bottom: 7px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--texto);
 }
 
@@ -296,7 +301,7 @@ form textarea {
     border: 1px solid var(--borde);
     border-radius: 8px;
     font-family: inherit;
-    font-size: 17px;
+    font-size: 16px;
     background-color: var(--campo);
     color: var(--texto);
     outline: none;
@@ -340,7 +345,7 @@ button {
     border-radius: 8px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: bold;
     transition:
         background-color 0.2s,
@@ -376,7 +381,7 @@ td {
     padding: 16px;
     text-align: left;
     border-bottom: 1px solid var(--borde);
-    font-size: 16px;
+    font-size: 14px;
 }
 
 th {
@@ -416,7 +421,7 @@ main a {
     color: var(--texto-secundario);
     text-decoration: none;
     font-weight: bold;
-    font-size: 17px;
+    font-size: 15px;
     transition: color 0.2s;
 }
 
@@ -463,7 +468,7 @@ main a:hover {
     border-radius: 8px;
     margin-bottom: 18px;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     border: 1px solid transparent;
 }
 
@@ -526,15 +531,15 @@ textarea:focus-visible {
     }
 
     header h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
 
     header p {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     main h2 {
-        font-size: 22px;
+        font-size: 21px;
     }
 
     .tarjeta,
@@ -543,7 +548,7 @@ textarea:focus-visible {
     }
 
     .tarjeta p {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     form {
@@ -563,7 +568,7 @@ textarea:focus-visible {
     th,
     td {
         padding: 12px;
-        font-size: 15px;
+        font-size: 14px;
     }
 }
 
